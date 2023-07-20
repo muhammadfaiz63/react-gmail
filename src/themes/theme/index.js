@@ -1,0 +1,120 @@
+// ==============================|| PRESET THEME - THEME SELECTOR ||============================== //
+
+const Theme = (colors) => {
+  const { blue, red, gold, cyan, green, grey, purple } = colors
+  const greyColors = {
+    0: grey[0],
+    50: grey[1],
+    100: grey[2],
+    200: grey[3],
+    300: grey[4],
+    400: grey[5],
+    500: grey[6],
+    600: grey[7],
+    700: grey[8],
+    800: grey[9],
+    900: grey[10],
+    A50: grey[15],
+    A100: grey[11],
+    A200: grey[12],
+    A400: grey[13],
+    A700: grey[14],
+    A800: grey[16],
+  }
+
+  const purpleColors = {
+    0: purple[0],
+    50: purple[1],
+    100: purple[2],
+    200: purple[3],
+    300: purple[4],
+    400: purple[5],
+    500: purple[6],
+    600: purple[7],
+    700: purple[8],
+    800: purple[9],
+    900: purple[10],
+    A50: purple[15],
+    A100: purple[11],
+    A200: purple[12],
+    A400: purple[13],
+    A700: purple[14],
+    A800: purple[16],
+  }
+  const contrastText = '#fff'
+
+  return {
+    primary: {
+      lighter: green[0],
+      100: green[1],
+      200: green[2],
+      light: green[3],
+      400: green[4],
+      main: '#293D4F',
+      dark: green[6],
+      700: green[7],
+      darker: green[8],
+      900: green[9],
+      contrastText,
+    },
+    secondary: {
+      lighter: greyColors[100],
+      100: greyColors[100],
+      200: greyColors[200],
+      light: greyColors[300],
+      400: greyColors[400],
+      main: '#fff',
+      600: greyColors[600],
+      dark: greyColors[700],
+      800: greyColors[800],
+      darker: greyColors[900],
+      A100: greyColors[0],
+      A200: greyColors.A400,
+      A300: greyColors.A700,
+      contrastText: greyColors[0],
+    },
+    error: {
+      lighter: red[0],
+      light: red[2],
+      main: red[4],
+      dark: red[7],
+      darker: red[9],
+      contrastText,
+    },
+    warning: {
+      lighter: gold[0],
+      light: gold[3],
+      main: gold[5],
+      dark: gold[7],
+      darker: gold[9],
+      contrastText: greyColors[100],
+    },
+    info: {
+      lighter: cyan[0],
+      light: cyan[3],
+      main: cyan[5],
+      dark: cyan[7],
+      darker: cyan[9],
+      contrastText,
+    },
+    success: {
+      lighter: green[0],
+      light: green[3],
+      main: green[5],
+      dark: green[7],
+      darker: green[9],
+      contrastText,
+    },
+    grey: greyColors,
+    purple: {
+      lighter: purple[0],
+      light: purple[3],
+      main: purple[5],
+      dark: purple[7],
+      darker: purple[9],
+      contrastText,
+    },
+  }
+}
+
+export default Theme
