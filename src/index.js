@@ -5,9 +5,6 @@ import { BrowserRouter } from 'react-router-dom'
 // scroll bar
 import 'simplebar/src/simplebar.css'
 
-// third-party
-import { Provider as ReduxProvider } from 'react-redux'
-
 // apex-chart
 import 'assets/third-party/apex-chart.css'
 
@@ -21,6 +18,8 @@ import MultiProvider from './config/MultiProvider'
 
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { Provider as ReduxProvider } from 'react-redux'
 
 // import { render } from 'react-dom';
 import { createRoot } from 'react-dom/client'
@@ -31,25 +30,27 @@ const container = document.getElementById('root')
 const root = createRoot(container)
 // ReactDOM.
 root.render(
-  <ReduxProvider store={store}>
-    <MultiProvider
-      providers={[
-        <Provider.AuthProvider key={0} />,
-        <Provider.UserProvider key={1} />,
-        <Provider.DocketProvider key={2} />,
-        <Provider.UploadProvider key={3} />,
-        <Provider.TrademarkProvider key={4} />,
-        <Provider.PatentProvider key={5} />,
-        <Provider.ReportProvider key={6} />,
-        
-      ]}>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <BrowserRouter basename='/'>
-          <App />
-        </BrowserRouter>
-      </LocalizationProvider>
-    </MultiProvider>
-  </ReduxProvider>,
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_API_KEY}>
+      <ReduxProvider store={store}>
+        <MultiProvider
+          providers={[
+            <Provider.AuthProvider key={0} />,
+            <Provider.UserProvider key={1} />,
+            <Provider.DocketProvider key={2} />,
+            <Provider.UploadProvider key={3} />,
+            <Provider.TrademarkProvider key={4} />,
+            <Provider.PatentProvider key={5} />,
+            <Provider.ReportProvider key={6} />,
+            
+          ]}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <BrowserRouter basename='/'>
+              <App />
+            </BrowserRouter>
+          </LocalizationProvider>
+        </MultiProvider>
+      </ReduxProvider>
+    </GoogleOAuthProvider>
   // document.getElementById("root")
 )
 

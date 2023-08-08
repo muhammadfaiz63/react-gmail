@@ -20,23 +20,16 @@ import {
 import * as Yup from 'yup'
 import { Formik } from 'formik'
 
-// project import
-// import FirebaseSocial from "./FirebaseSocial"
-import AnimateButton from 'components/extended/AnimateButton'
-import { ReactComponent as GoogleIcon } from "../../../assets/images/google.svg";
-
-// assets
-import { Visibility, VisibilityOff } from '@mui/icons-material'
-
-// ============================|| FIREBASE - LOGIN ||============================ //
-
-// context
 import { AuthContext } from '../../../context/index'
-import { gapi } from 'gapi-script';
+import AnimateButton from 'components/extended/AnimateButton'
+import { Visibility, VisibilityOff } from '@mui/icons-material'
+import { ReactComponent as LogoGoogle} from '../../../assets/images/google.svg'
+import { GoogleLogin } from '@react-oauth/google';
+import jwt_decode from "jwt-decode";
 
 const AuthLogin = () => {
   // context
-  const { signIn, errorMsg, setErrorMsg } = useContext(AuthContext)
+  const { signIn, checkAuth,errorMsg, setErrorMsg } = useContext(AuthContext)
 
   const [showPassword, setShowPassword] = React.useState(false)
   const handleClickShowPassword = () => {
@@ -47,16 +40,11 @@ const AuthLogin = () => {
     event.preventDefault()
   }
 
-  console.log("process.env.REACT_APP_API_KEY",process.env.REACT_APP_API_KEY)
-
-  useEffect(() => {
-    // Initialize Google Sign-In
-    gapi.load('auth2', () => {
-      gapi.auth2.init({
-        client_id: process.env.REACT_APP_API_KEY, // Replace with your actual client ID
-      });
-    });
-  }, []);
+  const handleSignOut = () => {
+    // Perform the sign-out action using the Google One Tap API
+    // google.accounts.id.disableAutoSelect();
+    // google.accounts.id.prompt();
+  };
 
   return (
     <>
@@ -217,59 +205,32 @@ const AuthLogin = () => {
                           Masuk
                         </Button>
                       </AnimateButton>
-                    {/* <Box
-                      sx={{
-                        width: '50%',
-                        display: 'flex',
-                        justifyContent: 'end',
-                        pr: 1,
-                      }}>
-                      <AnimateButton>
-                        <Button
-                          disableElevation
-                          disabled={isSubmitting}
-                          fullWidth
-                          size='large'
-                          type='submit'
-                          variant='outlined'
-                          sx={{
-                            '&.MuiButton-outlined': {
-                              backgroundColor: '#fff',
-                              color: '#293D4F',
-                              width: '100%',
-                              // ml: 8,
-                              borderRadius: '10px',
-                            },
-                          }}>
-                          Lupa Password
-                        </Button>
-                      </AnimateButton>
-                    </Box>
-                    <Box sx={{ width: '50%', pl: 1 }}>
-                      <AnimateButton>
-                        <Button
-                          disableElevation
-                          disabled={isSubmitting}
-                          fullWidth
-                          size='large'
-                          type='submit'
-                          variant='outlined'
-                          sx={{
-                            '&.MuiButton-outlined': {
-                              backgroundColor: '#293D4F',
-                              color: '#fff',
-                              width: '80%',
-                              borderRadius: '10px',
-                            },
-                          }}>
-                          Masuk
-                        </Button>
-                      </AnimateButton>
-                    </Box> */}
                   </Stack>
+                  <Grid container justifyContent="center"> 
                   <AnimateButton>
-                
+                  <GoogleLogin
+                    size="large"
+                    width={150}
+                    onSuccess={credentialResponse => {
+                      var decoded = jwt_decode(credentialResponse?.credential);
+                      let profile = {
+                        ...decoded,
+                        user : {
+                          name:decoded?.name,
+                          email:decoded?.email,
+                          token:credentialResponse?.credential
+                        }
+                      }
+                      // console.log(profile)
+                      checkAuth(profile);
+                    }}
+                    onError={() => {
+                      console.log('Login Failed');
+                    }}
+                    useOneTap
+                  />
                   </AnimateButton>
+                  </Grid>
                 </Grid>
                 <Grid item xs={0.5}></Grid>
               </Grid>
@@ -277,24 +238,7 @@ const AuthLogin = () => {
           )
         }}
       </Formik>
-      <div id="g_id_onload"
-        data-client_id={process.env.REACT_APP_API_KEY}
-        data-context="signin"
-        data-ux_mode="popup"
-        data-login_uri="http://localhost:3000"
-        data-auto_select="true"
-        data-itp_support="true">
-      </div>
-
-    <div class="g_id_signin"
-        data-type="standard"
-        data-shape="rectangular"
-        data-theme="outline"
-        data-text="signin_with"
-        data-size="large"
-        data-locale="id"
-        data-logo_alignment="left">
-    </div>
+      
     </>
   )
 }
