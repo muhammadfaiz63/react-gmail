@@ -6,22 +6,10 @@ import Loadable from "components/Loadable";
 import MainLayout from "layout/MainLayout";
 import MinimalLayout from "layout/MinimalLayout";
 
-//import step sementara
 // render - dashboard
-const DashboardDefault = Loadable(lazy(() => import("pages/dashboard")));
+const EmailDefault = Loadable(lazy(() => import("pages/email")));
 const Users = Loadable(lazy(() => import("pages/data-master/users")));
 const UsersForm = Loadable(lazy(() => import("pages/data-master/users/Form")));
-const Docket = Loadable(lazy(() => import("pages/data-master/docket")));
-const DocketForm = Loadable(lazy(() => import("pages/data-master/docket/Form")));
-const Patent = Loadable(lazy(() => import("pages/data-master/patent")));
-const PatentForm = Loadable(lazy(() => import("pages/data-master/patent/Form")));
-
-const Trademark = Loadable(lazy(() => import("pages/data-master/trademark")));
-const TrademarkForm = Loadable(lazy(() => import("pages/data-master/trademark/Form")));
-const Schedule = Loadable(lazy(() => import('pages/data-master/schedule')))
-const Report = Loadable(lazy(() => import('pages/data-master/report')))
-const ReportForm = Loadable(lazy(() => import('pages/data-master/report/Form')))
-
 
 // authentication
 const AuthLogin = Loadable(lazy(() => import("pages/authentication/Login")));
@@ -34,15 +22,15 @@ const routes = (isLoggedIn) => [
     children: [
       {
         path: "",
-        element: <DashboardDefault />,
+        element: <EmailDefault />,
       },
       {
         path: "app",
-        element: <DashboardDefault />,
+        element: <EmailDefault />,
       },
       {
         path: "app/dashboard",
-        element: <DashboardDefault />,
+        element: <EmailDefault />,
       },
       {
         path: "app/users",
@@ -51,38 +39,6 @@ const routes = (isLoggedIn) => [
       {
         path: "app/users/form/:id",
         element: <UsersForm />,
-      },
-      {
-        path: "app/docket",
-        element: <Docket />,
-      },
-      {
-        path: "app/docket/form/:id",
-        element: <DocketForm />,
-      },
-      {
-        path: "app/patent",
-        element: <Patent />,
-      },
-      {
-        path: "app/patent/form/:id",
-        element: <PatentForm />,
-      },
-      {
-        path: "app/trademark",
-        element: <Trademark />,
-      },
-      {
-        path: "app/trademark/form/:id",
-        element: <TrademarkForm />,
-      },
-      {
-        path: 'app/schedule',
-        element: <Schedule />,
-      },
-      {
-        path: 'app/report',
-        element: <Report />,
       }
     ],
   },

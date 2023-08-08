@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext,useEffect } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
 // material-ui
@@ -13,6 +13,7 @@ import {
   TextField,
   Typography,
   Box,
+  SvgIcon 
 } from '@mui/material'
 
 // third party
@@ -21,7 +22,8 @@ import { Formik } from 'formik'
 
 // project import
 // import FirebaseSocial from "./FirebaseSocial"
-import AnimateButton from 'components/@extended/AnimateButton'
+import AnimateButton from 'components/extended/AnimateButton'
+import { ReactComponent as GoogleIcon } from "../../../assets/images/google.svg";
 
 // assets
 import { Visibility, VisibilityOff } from '@mui/icons-material'
@@ -30,12 +32,11 @@ import { Visibility, VisibilityOff } from '@mui/icons-material'
 
 // context
 import { AuthContext } from '../../../context/index'
+import { gapi } from 'gapi-script';
 
 const AuthLogin = () => {
   // context
   const { signIn, errorMsg, setErrorMsg } = useContext(AuthContext)
-
-  const [checked, setChecked] = React.useState(false)
 
   const [showPassword, setShowPassword] = React.useState(false)
   const handleClickShowPassword = () => {
@@ -45,7 +46,17 @@ const AuthLogin = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault()
   }
-  console.log('errorMsg', errorMsg)
+
+  console.log("process.env.REACT_APP_API_KEY",process.env.REACT_APP_API_KEY)
+
+  useEffect(() => {
+    // Initialize Google Sign-In
+    gapi.load('auth2', () => {
+      gapi.auth2.init({
+        client_id: process.env.REACT_APP_API_KEY, // Replace with your actual client ID
+      });
+    });
+  }, []);
 
   return (
     <>
@@ -167,8 +178,7 @@ const AuthLogin = () => {
                       </FormHelperText>
                     )}
                   </Stack>
-
-                  <Stack direction='row' spacing={2} sx={{ mt: 2, justifyContent:'center' }}>
+                  <Stack direction='row' spacing={2} sx={{ mt:2,mb: 2, justifyContent:'center' }}>
                     <AnimateButton>
                       <Button
                         disableElevation
@@ -257,6 +267,9 @@ const AuthLogin = () => {
                       </AnimateButton>
                     </Box> */}
                   </Stack>
+                  <AnimateButton>
+                
+                  </AnimateButton>
                 </Grid>
                 <Grid item xs={0.5}></Grid>
               </Grid>
@@ -264,6 +277,24 @@ const AuthLogin = () => {
           )
         }}
       </Formik>
+      <div id="g_id_onload"
+        data-client_id={process.env.REACT_APP_API_KEY}
+        data-context="signin"
+        data-ux_mode="popup"
+        data-login_uri="http://localhost:3000"
+        data-auto_select="true"
+        data-itp_support="true">
+      </div>
+
+    <div class="g_id_signin"
+        data-type="standard"
+        data-shape="rectangular"
+        data-theme="outline"
+        data-text="signin_with"
+        data-size="large"
+        data-locale="id"
+        data-logo_alignment="left">
+    </div>
     </>
   )
 }

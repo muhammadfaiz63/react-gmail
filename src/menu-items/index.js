@@ -25,20 +25,11 @@ let menuList = {
       active: true,
       breadcrumbs: false
     },
-    ...authorizationData,
     {
-      _id: 6,
-      name: 'Report',
+      _id: 2,
+      name: 'Users',
       type: 'parent',
-      url: '/app/report',
-      active: true,
-      breadcrumbs: false
-    },
-    {
-      _id: 7,
-      name: 'Schedule',
-      type: 'parent',
-      url: '/app/schedule',
+      url: '/app/users',
       active: true,
       breadcrumbs: false
     },
