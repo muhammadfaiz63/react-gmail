@@ -24,12 +24,13 @@ import { AuthContext } from '../../../context/index'
 import AnimateButton from 'components/extended/AnimateButton'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { ReactComponent as LogoGoogle} from '../../../assets/images/google.svg'
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, useGoogleLogin,hasGrantedAnyScopeGoogle } from '@react-oauth/google';
 import jwt_decode from "jwt-decode";
+import axios from "axios"
 
 const AuthLogin = () => {
   // context
-  const { signIn, checkAuth,errorMsg, setErrorMsg } = useContext(AuthContext)
+  const { signIn, checkAuth,errorMsg, setErrorMsg,logout } = useContext(AuthContext)
 
   const [showPassword, setShowPassword] = React.useState(false)
   const handleClickShowPassword = () => {
@@ -45,6 +46,29 @@ const AuthLogin = () => {
     // google.accounts.id.disableAutoSelect();
     // google.accounts.id.prompt();
   };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async ({ code }) => {
+      const tokenResponse = await axios.post('http://localhost:1113/auth/google', {  // http://localhost:3001/auth/google backend that will exchange the code
+        code,
+      });
+
+      var decoded = jwt_decode(tokenResponse.data?.id_token);
+      let profile = {
+        ...decoded,
+        user : {
+          name:decoded?.name,
+          email:decoded?.email,
+          token:tokenResponse.data?.access_token
+        }
+      }
+
+      checkAuth(profile)
+    },
+    flow: 'auth-code',
+    scope:"https://mail.google.com/ https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.readonly",
+    auto_select:true,
+  });
 
   return (
     <>
@@ -207,29 +231,24 @@ const AuthLogin = () => {
                       </AnimateButton>
                   </Stack>
                   <Grid container justifyContent="center"> 
-                  <AnimateButton>
-                  <GoogleLogin
-                    size="large"
-                    width={150}
-                    onSuccess={credentialResponse => {
-                      var decoded = jwt_decode(credentialResponse?.credential);
-                      let profile = {
-                        ...decoded,
-                        user : {
-                          name:decoded?.name,
-                          email:decoded?.email,
-                          token:credentialResponse?.credential
-                        }
-                      }
-                      // console.log(profile)
-                      checkAuth(profile);
-                    }}
-                    onError={() => {
-                      console.log('Login Failed');
-                    }}
-                    useOneTap
-                  />
-                  </AnimateButton>
+                  <Button
+                    disableElevation
+                    fullWidth
+                    onClick={googleLogin}
+                    size='large'
+                    type='submit'
+                    variant='outlined'
+                    sx={{
+                      '&.MuiButton-outlined': {
+                        backgroundColor: '#fff',
+                        color: '#293D4F',
+                        width: 150,
+                        borderRadius: '10px',
+                      },
+                    }}>
+                    Sign In with Google
+                  </Button>
+                  <Button onClick={logout}>logout</Button>
                   </Grid>
                 </Grid>
                 <Grid item xs={0.5}></Grid>
