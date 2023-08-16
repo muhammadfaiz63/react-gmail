@@ -8,6 +8,7 @@ import MinimalLayout from "layout/MinimalLayout";
 
 // render - dashboard
 const EmailDefault = Loadable(lazy(() => import("pages/email")));
+const EmailDetail = Loadable(lazy(() => import("pages/email/detail")));
 const Users = Loadable(lazy(() => import("pages/data-master/users")));
 const UsersForm = Loadable(lazy(() => import("pages/data-master/users/Form")));
 
@@ -31,6 +32,14 @@ const routes = (isLoggedIn) => [
       {
         path: "app/dashboard",
         element: <EmailDefault />,
+      },
+      {
+        path: "app/email",
+        element: <EmailDefault />,
+      },
+      {
+        path: "app/email/:id",
+        element: <EmailDetail />,
       },
       {
         path: "app/users",

@@ -5,6 +5,7 @@ import { Button, Stack, TextField, Alert, Grid, Box, Divider,Typography,ListItem
 import _ from 'lodash'
 import axios from 'axios'
 import MainCard from 'components/MainCard'
+import { Link } from 'react-router-dom'
 
 const EmailPage = () => {
 
@@ -52,9 +53,6 @@ const EmailPage = () => {
     <>
       <MainCard
         title='Email'>
-          List Email by ID
-          <Button onClick={getListMessage}></Button>
-
           <List dense sx={{ width: '100%', bgcolor: 'background.paper' }}>
             {listMessages.map((value) => {
               const labelId = `checkbox-list-secondary-label-${value.snippet}`;
@@ -71,8 +69,8 @@ const EmailPage = () => {
                   }
                   disablePadding
                 >
-                  <ListItemButton sx={{borderBottom:"1px solid #e0e0e0"}}>
-                  <div dangerouslySetInnerHTML={{__html: value.snippet}} />
+                  <ListItemButton sx={{borderBottom:"1px solid #e0e0e0",py:1}} component={Link} to={'/app/email/'+value.id}>
+                  <div dangerouslySetInnerHTML={{__html: value.snippet.replace(/\s/g,'').length > 157 ? value.snippet.slice(0,155) + "..." : value.snippet}} />
                   </ListItemButton>
                 </ListItem>
               );
