@@ -12,7 +12,7 @@ const EmailPage = () => {
 
   const [ listMessages, setListMessages ] = useState([])
 
-  const [checked, setChecked] = React.useState([1]);
+  const [checked, setChecked] = React.useState([]);
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -26,6 +26,8 @@ const EmailPage = () => {
 
     setChecked(newChecked);
   };
+
+  console.log("checked",checked)
 
  
   useEffect(() => {
@@ -54,8 +56,8 @@ const EmailPage = () => {
       method: 'post',
       maxBodyLength: Infinity,
       url: 'users/'+JSON.parse(localStorage.user)?.email+'/messages/batchDelete?key='+process.env.REACT_APP_API_KEY,
-      body:{
-        
+      data:{
+        "ids": checked
       },
       headers: { 
         'Authorization': 'Bearer '+ localStorage.getItem('authtoken')
@@ -64,8 +66,9 @@ const EmailPage = () => {
 
     axios.request(config).then(function (response) {
       console.log(response)
-      setListMessages(response.data.threads)
-    }).catch(err=>console.error(err));
+      alert("data berhasil di hapus")
+      // setListMessages(response.data.threads)
+    }).catch(err=>alert(err));
   }
 
   return (
@@ -75,7 +78,7 @@ const EmailPage = () => {
           <List dense sx={{ width: '100%', bgcolor: 'background.paper' }}>
             <Grid container justifyContent="space-between" sx={{padding:1,bottomPadding:3}}>
             <Button variant="contained" color="primary">Compose</Button>
-            <IconButton><DeleteIcon/></IconButton>
+            <IconButton onClick={deleteBatch}><DeleteIcon/></IconButton>
             </Grid>
             {listMessages.map((value) => {
               const labelId = `checkbox-list-secondary-label-${value.snippet}`;
@@ -85,8 +88,8 @@ const EmailPage = () => {
                   secondaryAction={
                     <Checkbox
                       edge="end"
-                      onChange={handleToggle(value.snippet)}
-                      checked={checked.indexOf(value.snippet) !== -1}
+                      onChange={handleToggle(value.id)}
+                      checked={checked.indexOf(value.id) !== -1}
                       inputProps={{ 'aria-labelledby': labelId }}
                     />
                   }
