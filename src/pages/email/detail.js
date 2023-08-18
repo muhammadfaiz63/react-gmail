@@ -25,7 +25,7 @@ const EmailPage = () => {
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: 'https://gmail.googleapis.com/gmail/v1/users/muhammadfaiz7130%40gmail.com/threads/'+id+'?key='+process.env.REACT_APP_API_KEY,
+      url: 'https://gmail.googleapis.com/gmail/v1/users/muhammadfaiz7130%40gmail.com/threads/'+id+'?key='+process.env.REACT_APP_API_KEY+'&format=html',
       headers: { 
         'Authorization': 'Bearer '+ localStorage.getItem('authtoken')
       }

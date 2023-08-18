@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
 
 // material-ui
-import { Button, Stack, TextField, Alert, Grid, Box, Divider,Typography,ListItemButton,ListItemText,List,ListItem ,Checkbox } from '@mui/material'
+import { Button, Stack, TextField,IconButton , Alert, Grid, Box, Divider,Typography,ListItemButton,ListItemText,List,ListItem ,Checkbox } from '@mui/material'
 import _ from 'lodash'
 import axios from 'axios'
+import { Delete as DeleteIcon } from '@mui/icons-material';
 import MainCard from 'components/MainCard'
 import { Link } from 'react-router-dom'
 
@@ -32,7 +33,6 @@ const EmailPage = () => {
   }, [])
 
   const getListMessage = () => {
-
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
@@ -49,11 +49,34 @@ const EmailPage = () => {
     }).catch(err=>console.error(err));
   }
 
+  const deleteBatch = () => {
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'users/'+JSON.parse(localStorage.user)?.email+'/messages/batchDelete?key='+process.env.REACT_APP_API_KEY,
+      body:{
+        
+      },
+      headers: { 
+        'Authorization': 'Bearer '+ localStorage.getItem('authtoken')
+      }
+    };
+
+    axios.request(config).then(function (response) {
+      console.log(response)
+      setListMessages(response.data.threads)
+    }).catch(err=>console.error(err));
+  }
+
   return (
     <>
       <MainCard
         title='Email'>
           <List dense sx={{ width: '100%', bgcolor: 'background.paper' }}>
+            <Grid container justifyContent="space-between" sx={{padding:1,bottomPadding:3}}>
+            <Button variant="contained" color="primary">Compose</Button>
+            <IconButton><DeleteIcon/></IconButton>
+            </Grid>
             {listMessages.map((value) => {
               const labelId = `checkbox-list-secondary-label-${value.snippet}`;
               return (
