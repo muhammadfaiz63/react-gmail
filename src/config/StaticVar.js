@@ -1,4 +1,4 @@
-const API_SERVICES = 'https://apihaki.teknologi40.com'
+const API_SERVICES = 'http://localhost:1113'
 // const API_SERVICES = 'http://localhost:1111'
 // const API_SERVICES = 'mongodb://0.0.0.0:27017/hakidb'
 

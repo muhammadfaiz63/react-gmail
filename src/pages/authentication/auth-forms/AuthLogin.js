@@ -27,6 +27,7 @@ import { ReactComponent as LogoGoogle} from '../../../assets/images/google.svg'
 import { GoogleLogin, useGoogleLogin,hasGrantedAnyScopeGoogle } from '@react-oauth/google';
 import jwt_decode from "jwt-decode";
 import axios from "axios"
+import StaticVar from 'config/StaticVar'
 
 const AuthLogin = () => {
   // context
@@ -49,7 +50,7 @@ const AuthLogin = () => {
 
   const googleLogin = useGoogleLogin({
     onSuccess: async ({ code }) => {
-      const tokenResponse = await axios.post('http://localhost:1113/auth/google', {  // http://localhost:3001/auth/google backend that will exchange the code
+      const tokenResponse = await axios.post(StaticVar.API_SERVICES+'/auth/google', {  // http://localhost:3001/auth/google backend that will exchange the code
         code,
       });
 

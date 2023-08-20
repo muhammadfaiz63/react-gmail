@@ -7,12 +7,18 @@ import axios from 'axios'
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import MainCard from 'components/MainCard'
 import { Link } from 'react-router-dom'
+import FormDialog from 'components/dialogs/FormDialog';
+import ContentEditor from "components/contentEditor"
 
 const EmailPage = () => {
 
   const [ listMessages, setListMessages ] = useState([])
 
-  const [checked, setChecked] = React.useState([]);
+  const [checked, setChecked] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [newMessage, setNewMessage] = useState(false);
+  const [idTo, setIdTo] = useState("");
+  const [subject, setSubject] = useState("");
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -38,7 +44,7 @@ const EmailPage = () => {
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: 'https://gmail.googleapis.com/gmail/v1/users/muhammadfaiz7130%40gmail.com/threads?key='+process.env.REACT_APP_API_KEY,
+      url: 'https://gmail.googleapis.com/gmail/v1/users/'+JSON.parse(localStorage.user)?.email+'/threads?key='+process.env.REACT_APP_API_KEY,
       headers: { 
         'Authorization': 'Bearer '+ localStorage.getItem('authtoken')
       }
@@ -55,7 +61,7 @@ const EmailPage = () => {
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'users/'+JSON.parse(localStorage.user)?.email+'/messages/batchDelete?key='+process.env.REACT_APP_API_KEY,
+      url: 'https://gmail.googleapis.com/gmail/v1/users/'+JSON.parse(localStorage.user)?.email+'/messages/batchDelete?key='+process.env.REACT_APP_API_KEY,
       data:{
         "ids": checked
       },
@@ -67,7 +73,30 @@ const EmailPage = () => {
     axios.request(config).then(function (response) {
       console.log(response)
       alert("data berhasil di hapus")
-      // setListMessages(response.data.threads)
+      const deletedMessage = listMessages.filter(message => !checked.includes(message.id))
+      setListMessages(deletedMessage)
+    }).catch(err=>alert(err));
+  }
+
+  
+  const sendMessage = () => {
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://gmail.googleapis.com/gmail/v1/users/'+JSON.parse(localStorage.user)?.email+'/messages/send?key='+process.env.REACT_APP_API_KEY,
+      data:
+      {"payload":{"body":{"attachmentId":"","data":""},"headers":[{"name":"","value":""}]}}
+      ,
+      headers: { 
+        'Authorization': 'Bearer '+ localStorage.getItem('authtoken')
+      }
+    };
+
+    axios.request(config).then(function (response) {
+      console.log(response)
+      alert("data berhasil di hapus")
+      const deletedMessage = listMessages.filter(message => !checked.includes(message.id))
+      setListMessages(deletedMessage)
     }).catch(err=>alert(err));
   }
 
@@ -77,7 +106,7 @@ const EmailPage = () => {
         title='Email'>
           <List dense sx={{ width: '100%', bgcolor: 'background.paper' }}>
             <Grid container justifyContent="space-between" sx={{padding:1,bottomPadding:3}}>
-            <Button variant="contained" color="primary">Compose</Button>
+            <Button variant="contained" color="primary" onClick={()=>setOpen(true)}>Compose</Button>
             <IconButton onClick={deleteBatch}><DeleteIcon/></IconButton>
             </Grid>
             {listMessages.map((value) => {
@@ -103,6 +132,42 @@ const EmailPage = () => {
             })}
           </List>
       </MainCard>
+      <FormDialog open={open}
+			onClose={()=>setOpen(false)}
+      title="New Message"
+      minWidth="md"
+      maxWidth="md"
+      content={
+        <div style={{width:600}}>
+          <TextField
+            placeholder="Recipients"
+            value={idTo}
+            fullWidth
+            onChange={(e)=>setIdTo(e.target.value)}
+            sx={{mb:1}}
+          />
+          <TextField
+            placeholder="Subject"
+            value={subject}
+            fullWidth
+            onChange={(e)=>setSubject(e.target.value)}
+            sx={{mb:1}}
+          />
+          <ContentEditor
+              handleChange={(event, editor) =>
+                  setNewMessage(editor.getData())
+              }
+              value={newMessage}
+          />
+        </div>
+      }
+      actions={
+        <Grid container justifyContent="flex-end" sx={{pr:2,pb:2}}>
+          <Button variant="contained" sx={{border:"2px solid #293D4F",backgroundColor:"#fff",color:"#293D4F",mr:2}} onClick={()=>setOpen(false)}>Batalkan</Button>
+          <Button color="primary" variant="contained" sx={{width:80}}>Kirim</Button>
+        </Grid>
+      }
+      ></FormDialog>
     </>
   )
 }
