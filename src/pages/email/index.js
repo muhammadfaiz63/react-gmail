@@ -33,8 +33,6 @@ const EmailPage = () => {
     setChecked(newChecked);
   };
 
-  console.log("checked",checked)
-
  
   useEffect(() => {
     getListMessage()
@@ -77,28 +75,82 @@ const EmailPage = () => {
       setListMessages(deletedMessage)
     }).catch(err=>alert(err));
   }
+  const sendEmail = () => {
+    sendMessage(
+      {
+        'To': idTo,
+        'Subject': subject
+      },
+      `${newMessage}`,
+    );
 
-  
-  const sendMessage = () => {
+    return false;
+  };
+
+  // const composeTidy = () => {
+  //   setComposeModalVisible(false);
+  //   setComposeTo('');
+  //   setComposeSubject('');
+  //   setComposeMessage('');
+
+  //   setSendButtonDisabled(false);
+  // };
+
+  // const sendReply = () => {
+  //   setReplyButtonDisabled(true);
+
+  //   sendMessage(
+  //     {
+  //       'To': replyTo,
+  //       'Subject': replySubject,
+  //       'In-Reply-To': replyMessageId
+  //     },
+  //     replyMessage,
+  //     replyTidy
+  //   );
+
+  //   return false;
+  // };
+
+  // const replyTidy = () => {
+  //   setReplyModalVisible(false);
+  //   setReplyMessage('');
+
+  //   setReplyButtonDisabled(false);
+  // };
+
+  // const fillInReply = (to, subject, message_id) => {
+  //   setReplyTo(to);
+  //   setReplySubject(subject);
+  //   setReplyMessageId(message_id);
+  // };
+
+  const sendMessage = (headers_obj, message) => {
+    let email = '';
+
+    for (const header in headers_obj) {
+      email += `${header}: ${headers_obj[header]}\r\n`;
+    }
+
+    email += `\r\n${message}`;
+
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
       url: 'https://gmail.googleapis.com/gmail/v1/users/'+JSON.parse(localStorage.user)?.email+'/messages/send?key='+process.env.REACT_APP_API_KEY,
-      data:
-      {"payload":{"body":{"attachmentId":"","data":""},"headers":[{"name":"","value":""}]}}
-      ,
+      data:{
+        'raw': window.btoa(email).replace(/\+/g, '-').replace(/\//g, '_')
+      },
       headers: { 
         'Authorization': 'Bearer '+ localStorage.getItem('authtoken')
       }
     };
 
     axios.request(config).then(function (response) {
-      console.log(response)
-      alert("data berhasil di hapus")
-      const deletedMessage = listMessages.filter(message => !checked.includes(message.id))
-      setListMessages(deletedMessage)
+      alert("data berhasil di kirim")
+      setOpen(false)
     }).catch(err=>alert(err));
-  }
+  };
 
   return (
     <>
@@ -164,7 +216,7 @@ const EmailPage = () => {
       actions={
         <Grid container justifyContent="flex-end" sx={{pr:2,pb:2}}>
           <Button variant="contained" sx={{border:"2px solid #293D4F",backgroundColor:"#fff",color:"#293D4F",mr:2}} onClick={()=>setOpen(false)}>Batalkan</Button>
-          <Button color="primary" variant="contained" sx={{width:80}}>Kirim</Button>
+          <Button color="primary" variant="contained" sx={{width:80}} onClick={sendEmail}>Kirim</Button>
         </Grid>
       }
       ></FormDialog>
