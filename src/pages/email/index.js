@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 
 // material-ui
-import { Button, Stack, TextField,IconButton , Alert, Grid, Box, Divider,Typography,ListItemButton,ListItemText,List,ListItem ,Checkbox } from '@mui/material'
+import { Button, Stack, TextField,IconButton , Alert, Grid, Box, createFilterOptions, Divider,Typography,ListItemButton, Autocomplete,List,ListItem ,Checkbox } from '@mui/material'
 import _ from 'lodash'
 import axios from 'axios'
 import { Delete as DeleteIcon } from '@mui/icons-material';
@@ -17,7 +17,9 @@ const EmailPage = () => {
   const [checked, setChecked] = useState([]);
   const [open, setOpen] = useState(false);
   const [newMessage, setNewMessage] = useState(false);
-  const [idTo, setIdTo] = useState("");
+  const [idTo, setIdTo] = useState([]);
+  const [idCc, setIdCc] = useState([]);
+  const [idBcc, setIdBcc] = useState([]);
   const [subject, setSubject] = useState("");
 
   const handleToggle = (value) => () => {
@@ -50,8 +52,8 @@ const EmailPage = () => {
 
 
     axios.request(config).then(function (response) {
-      console.log(response)
-      setListMessages(response.data.threads)
+      const listDataMessage = response.data.threads.filter(message => message.snippet !== '')
+      setListMessages(listDataMessage)
     }).catch(err=>console.error(err));
   }
 
@@ -78,7 +80,9 @@ const EmailPage = () => {
   const sendEmail = () => {
     sendMessage(
       {
-        'To': idTo,
+        'To': idTo.length > 0 ? idTo.join(', ') : "",
+        'Cc': idCc.length > 0 ? idCc.join(', ') : "",
+        'Bcc': idBcc.length > 0 ? idBcc.join(', ') : "",
         'Subject': subject
       },
       `${newMessage}`,
@@ -147,10 +151,13 @@ const EmailPage = () => {
     };
 
     axios.request(config).then(function (response) {
+      getListMessage();
       alert("data berhasil di kirim")
       setOpen(false)
     }).catch(err=>alert(err));
   };
+
+  const filter = createFilterOptions()
 
   return (
     <>
@@ -191,12 +198,132 @@ const EmailPage = () => {
       maxWidth="md"
       content={
         <div style={{width:600}}>
-          <TextField
-            placeholder="Recipients"
+          <Autocomplete
+            multiple
+            size='small'
+            id='tags-filled'
+            options={[]}
+            selectOnFocus
+            onChange={(event, newValue) => {
+              if (newValue && newValue.inputValue) {
+                setIdTo([...idTo, newValue])
+              } else {
+                setIdTo(newValue)
+              }
+            }}
             value={idTo}
-            fullWidth
-            onChange={(e)=>setIdTo(e.target.value)}
-            sx={{mb:1}}
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params)
+
+              const { inputValue } = params
+              // Suggest the creation of a new value
+              const isExisting = options.some(
+                (option) => inputValue === option,
+              )
+              if (inputValue !== '' && !isExisting) {
+                filtered.push(inputValue)
+              }
+
+              return filtered
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                fullWidth
+                id='outlined-basic'
+                variant='outlined'
+                label='Recipients'
+              />
+            )}
+            sx={{
+              bgcolor: '#fff',
+              my:1
+            }}
+          />
+          <Autocomplete
+            multiple
+            size='small'
+            id='tags-filled'
+            options={[]}
+            selectOnFocus
+            onChange={(event, newValue) => {
+              if (newValue && newValue.inputValue) {
+                setIdCc([...idCc, newValue])
+              } else {
+                setIdCc(newValue)
+              }
+            }}
+            value={idCc}
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params)
+
+              const { inputValue } = params
+              // Suggest the creation of a new value
+              const isExisting = options.some(
+                (option) => inputValue === option,
+              )
+              if (inputValue !== '' && !isExisting) {
+                filtered.push(inputValue)
+              }
+
+              return filtered
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                fullWidth
+                id='outlined-basic'
+                variant='outlined'
+                label='Cc'
+              />
+            )}
+            sx={{
+              bgcolor: '#fff',
+              my:1
+            }}
+          />
+          
+          <Autocomplete
+            multiple
+            size='small'
+            id='tags-filled'
+            options={[]}
+            selectOnFocus
+            onChange={(event, newValue) => {
+              if (newValue && newValue.inputValue) {
+                setIdBcc([...idBcc, newValue])
+              } else {
+                setIdBcc(newValue)
+              }
+            }}
+            value={idBcc}
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params)
+
+              const { inputValue } = params
+              // Suggest the creation of a new value
+              const isExisting = options.some(
+                (option) => inputValue === option,
+              )
+              if (inputValue !== '' && !isExisting) {
+                filtered.push(inputValue)
+              }
+
+              return filtered
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                fullWidth
+                id='outlined-basic'
+                variant='outlined'
+                label='Bcc'
+              />
+            )}
+            sx={{
+              bgcolor: '#fff',
+              my:1
+            }}
           />
           <TextField
             placeholder="Subject"
